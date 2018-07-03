@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/thymleaf-extras-springsecurity4"
+	layout:decorator="template1">
+<head>
+<meta charset="utf-8" />
+<title>Comptes</title>
+
+
+<script type="text/javascript">
+	function yesnoCheck() {
+		if (document.getElementById('cour').checked) {
+
+			document.getElementById('CC').style.display = 'block';
+			document.getElementById('CE').style.display = 'none';
+		} else {
+			document.getElementById('CC').style.display = 'none';
+			document.getElementById('CE').style.display = 'block';
+		}
+	}
+</script>
+</head>
+<body>
+	<div layout:fragment="content">
+
+
+		<div class="col-md-6">
+			<div class="panel panel-primary">
+				<div class="panel-heading">Consultation d'un compte</div>
+				<div class="panel-body">
+
+					<form th:action="@{/comptes}" method="get">
+						<div class="form-group">
+							<label>Code Cpte:</label> <input type="text" name="codeCompte"
+								th:value="${codeCompte}" class="form-control " /> <br />
+							<button class="btn btn-primary" type="submit">Ok</button>
+						</div>
+
+					</form>
+					<div class="text-danger" th:if="${Exception}"
+						th:text="${Exception.message}"></div>
+				</div>
+			</div>
+
+
+
+			<div class="panel panel-primary" th:if="${compte}">
+				<div class="panel-heading">Information sur le compte</div>
+				<div class="panel-body">
+
+					<div>
+
+						<label>Client :</label> <label th:text="${compte.client.nom}"></label>
+					</div>
+
+					<div>
+						<label>Code :</label> <label th:text="${compte.codeCompte}"></label>
+					</div>
+					<div>
+						<label>Solde :</label> <label th:text="${compte.solde}"></label>
+					</div>
+					<div>
+						<label>Date création :</label> <label
+							th:text="${compte.dateCreation}"></label>
+					</div>
+					<div>
+						<label>Type :</label> <label th:text="${compte.class.simpleName}"></label>
+					</div>
+					<div th:if="${compte.class.simpleName=='CompteCourant'}">
+						<label>Découvert :</label> <label th:text="${compte.decouvert}"></label>
+					</div>
+
+					<div th:if="${compte.class.simpleName=='CompteEpargne'}">
+						<label>Taux :</label> <label th:text="${compte.taux}"></label>
+					</div>
+
+
+				</div>
+			</div>
+
+		</div>
+
+
+		<div class="col-md-6">
+			<div class="panel panel-primary">
+				<div class="panel-heading">Ajouter un compte</div>
+				<div class="panel-body">
+
+					<form th:action="@{/addCompte}" method="post">
+
+
+						<div class="form-group ">
+							<input type="radio" name="typecompte" value="CompteCourant"
+								checked="checked" id="cour" onclick="javascript:yesnoCheck();" />
+							<label>Courant</label> <input type="radio" name="typecompte"
+								value="CompteEpargne" id="epa"
+								onclick="javascript:yesnoCheck();" /> <label>Epargne</label>
+						</div>
+
+
+						<div class="form-group">
+							<label class=" col-xs-4 ">Code Cpte:</label>
+							<div class="col-xs-8">
+								<input type="text" name="codeCompte" required="required"
+									class="form-control" />
+							</div>
+
+						</div>
+
+						<div class="form-group">
+							<label class=" col-xs-4 ">Solde:</label>
+							<div class="col-xs-8">
+								<input type="text" name="solde" required="required"
+									class="form-control" />
+							</div>
+
+						</div>
+
+
+
+
+						<div class="form-group">
+
+							<div id="CE" style="display: none">
+								<label class="col-xs-4">taux :</label>
+								<div class="col-xs-8">
+
+									<input type="text" name="taux" value="0" th:value="${taux}"
+										class="form-control" />
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+
+							<div id="CC">
+								<label class="col-xs-4">Decouvert :</label>
+								<div class="col-xs-8">
+
+									<input type="text" name="decouvert" value="0"
+										th:value="${decouvert}" class="form-control" />
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+
+							<div>
+								<label class="col-xs-4">Client :</label>
+								<div class="col-xs-8">
+
+									<select name="client" class="form-control">
+										<option th:each="a:${listeClient}" th:text="${a.nom}"
+											th:value="${a.code}"></option>
+
+									</select>
+								</div>
+							</div>
+							<span></span>
+
+						</div>
+
+
+						<div class="form-group">
+
+							<button class="btn btn-primary" type="submit">Ok</button>
+						</div>
+
+					</form>
+					<div class="text-danger" th:if="${Exception}"
+						th:text="${Exception.message}"></div>
+				</div>
+			</div>
+		</div>
+
+
+
+
+		<div class="col-md-12">
+
+			<div class="panel panel-primary">
+				<div class="panel-heading">Liste des comptes</div>
+				<div class="panel-body">
+					<table class="table">
+						<tr>
+							<th>code</th>
+							<th>Client</th>
+							<th>Type</th>
+							<th>Date</th>
+							<th>solde</th>
+							<th></th>
+						</tr>
+						<tr th:each="c:${listeCompte}">
+							<td th:text="${c.codeCompte}"></td>
+							<td th:text="${c.client.nom}"></td>
+							<td th:text="${c.class.simpleName}"></td>
+							<td th:text="${c.dateCreation}"></td>
+							<td th:text="${c.solde}"></td>
+							<td><a class="btn btn-danger"
+								th:href="@{deleteCompte(codeCompte=${c.codeCompte})}">Supprimer</a></td>
+						</tr>
+					</table>
+					<div class="container">
+						<ul class="nav nav-pills">
+							<li th:each="p,status:${pages}"><a
+								th:href="@{/comptes(page=${status.index})}"
+								th:text="${status.index}"></a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+	</div>
+
+
+</body>
+</html>

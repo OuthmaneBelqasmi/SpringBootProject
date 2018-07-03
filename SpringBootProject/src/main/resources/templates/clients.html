@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:sec="http://www.thymeleaf.org/thymleaf-extras-springsecurity4"
+	layout:decorator="template1">
+<head>
+<meta charset="utf-8" />
+<title>Clients</title>
+</head>
+<body>
+	<div layout:fragment="content">
+
+		<div class="col-md-6">
+			<div class="panel panel-primary">
+				<div class="panel-heading">Ajouter des clients</div>
+				<div class="panel-body">
+					<form th:action="@{/saveclient}" method="get">
+						<input type="hidden" name="code" th:value="${code}" />
+						<div class="form-group">
+							<label class=" col-xs-4 "> Nom :</label>
+							<div class="col-xs-8">
+								<input name="nom" type="text" th:value="${nom}"
+									class="form-control" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class=" col-xs-4 "> E-mail :</label>
+							<div class="col-xs-8">
+								<input name="email" type="text" th:value="${email}" class="form-control"  />
+							</div>
+						</div>
+						<button type="submit" class="btn btn-primary">Save</button>
+
+					</form>
+				</div>
+
+			</div>
+		</div>
+
+		<div class="col-md-12">
+
+			<div class="panel panel-primary">
+				<div class="panel-heading">Liste des clients</div>
+				<div class="panel-body">
+					<table class="table">
+						<tr>
+							<th>Code</th>
+							<th>Nom</th>
+							<th>E-mail</th>
+							<th></th>
+							<th></th>
+						</tr>
+						<tr th:each="cl:${listeclient}">
+							<td th:text="${cl.code}"></td>
+							<td th:text="${cl.nom}"></td>
+							<td th:text="${cl.email}"></td>
+							<td><a class="btn btn-primary"
+								th:href="@{/client(code=${cl.code},nom=${cl.nom},email=${cl.email})}">Modifier</a></td>
+							<td><a class="btn btn-danger"
+								th:href="@{/deleteclient(code=${cl.code})}">Supprimer</a></td>
+
+						</tr>
+					</table>
+					<div class="container">
+						<ul class="nav nav-pills">
+							<li th:each="p,status:${pages}"><a
+								th:href="@{/client(page=${status.index})}"
+								th:text="${status.index}"></a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
+</body>
+</html>
